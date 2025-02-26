@@ -1,4 +1,4 @@
----
+"---
 sidebar_position: 1
 ---
 
@@ -50,30 +50,30 @@ has also been created to define a contract for evidence against malicious valida
 // Evidence defines the contract which concrete evidence types of misbehavior
 // must implement.
 type Evidence interface {
-	proto.Message
+        proto.Message
 
-	Route() string
-	String() string
-	Hash() []byte
-	ValidateBasic() error
+        Route() string
+        String() string
+        Hash() []byte
+        ValidateBasic() error
 
-	// Height at which the infraction occurred
-	GetHeight() int64
+        // Height at which the infraction occurred
+        GetHeight() int64
 }
 
 // ValidatorEvidence extends Evidence interface to define contract
 // for evidence against malicious validators
 type ValidatorEvidence interface {
-	Evidence
+        Evidence
 
-	// The consensus address of the malicious validator at time of infraction
-	GetConsensusAddress() sdk.ConsAddress
+        // The consensus address of the malicious validator at time of infraction
+        GetConsensusAddress() sdk.ConsAddress
 
-	// The total power of the malicious validator at time of infraction
-	GetValidatorPower() int64
+        // The total power of the malicious validator at time of infraction
+        GetValidatorPower() int64
 
-	// The total validator set power at time of infraction
-	GetTotalPower() int64
+        // The total validator set power at time of infraction
+        GetTotalPower() int64
 }
 ```
 
@@ -165,11 +165,11 @@ func SubmitEvidence(ctx Context, evidence Evidence) error {
   }
 
   ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeSubmitEvidence,
-			sdk.NewAttribute(types.AttributeKeyEvidenceHash, strings.ToUpper(hex.EncodeToString(evidence.Hash()))),
-		),
-	)
+                sdk.NewEvent(
+                        types.EventTypeSubmitEvidence,
+                        sdk.NewAttribute(types.AttributeKeyEvidenceHash, strings.ToUpper(hex.EncodeToString(evidence.Hash()))),
+                ),
+        )
 
   SetEvidence(ctx, evidence)
   return nil
@@ -219,7 +219,7 @@ The Cosmos SDK handles two types of evidence inside the ABCI `BeginBlock`:
 The evidence module handles these two evidence types the same way. First, the Cosmos SDK converts the CometBFT concrete evidence type to an SDK `Evidence` interface using `Equivocation` as the concrete type.
 
 ```protobuf reference
-https://github.com/cosmos/cosmos-sdk/blob/v0.47.0-rc1/proto/cosmos/evidence/v1beta1/evidence.proto#L12-L32
+https://github.com/cosmos/cosmos-sdk/blob/v0.50/proto/cosmos/evidence/v1beta1/evidence.proto#L12-L32
 ```
 
 For some `Equivocation` submitted in `block` to be valid, it must satisfy:
@@ -234,7 +234,7 @@ Where:
 If valid `Equivocation` evidence is included in a block, the validator's stake is
 reduced (slashed) by `SlashFractionDoubleSign` as defined by the `x/slashing` module
 of what their stake was when the infraction occurred, rather than when the evidence was discovered.
-We want to "follow the stake", i.e., the stake that contributed to the infraction
+We want to ""follow the stake"", i.e., the stake that contributed to the infraction
 should be slashed, even if it has since been redelegated or started unbonding.
 
 In addition, the validator is permanently jailed and tombstoned to make it impossible for that
@@ -243,7 +243,7 @@ validator to ever re-enter the validator set.
 The `Equivocation` evidence is handled as follows:
 
 ```go reference
-https://github.com/cosmos/cosmos-sdk/blob/v0.47.0-rc1/x/evidence/keeper/infraction.go#L26-L140
+https://github.com/cosmos/cosmos-sdk/blob/v0.50/x/evidence/keeper/infraction.go#L26-L140
 ```
 
 **Note:** The slashing, jailing, and tombstoning calls are delegated through the `x/slashing` module
@@ -279,7 +279,7 @@ To query evidence by hash
 Example:
 
 ```bash
-simd query evidence evidence "DF0C23E8634E480F84B9D5674A7CDC9816466DEC28A3358F73260F68D28D7660"
+simd query evidence evidence ""DF0C23E8634E480F84B9D5674A7CDC9816466DEC28A3358F73260F68D28D7660""
 ```
 
 Example Output:
@@ -289,7 +289,7 @@ evidence:
   consensus_address: cosmosvalcons1ntk8eualewuprz0gamh8hnvcem2nrcdsgz563h
   height: 11
   power: 100
-  time: "2021-10-20T16:08:38.194017624Z"
+  time: ""2021-10-20T16:08:38.194017624Z""
 ```
 
 To get all evidence
@@ -307,10 +307,10 @@ evidence:
   consensus_address: cosmosvalcons1ntk8eualewuprz0gamh8hnvcem2nrcdsgz563h
   height: 11
   power: 100
-  time: "2021-10-20T16:08:38.194017624Z"
+  time: ""2021-10-20T16:08:38.194017624Z""
 pagination:
   next_key: null
-  total: "1"
+  total: ""1""
 ```
 
 ### REST
@@ -328,18 +328,18 @@ Get evidence by hash
 Example:
 
 ```bash
-curl -X GET "http://localhost:1317/cosmos/evidence/v1beta1/evidence/DF0C23E8634E480F84B9D5674A7CDC9816466DEC28A3358F73260F68D28D7660"
+curl -X GET ""http://localhost:1317/cosmos/evidence/v1beta1/evidence/DF0C23E8634E480F84B9D5674A7CDC9816466DEC28A3358F73260F68D28D7660""
 ```
 
 Example Output:
 
 ```bash
 {
-  "evidence": {
-    "consensus_address": "cosmosvalcons1ntk8eualewuprz0gamh8hnvcem2nrcdsgz563h",
-    "height": "11",
-    "power": "100",
-    "time": "2021-10-20T16:08:38.194017624Z"
+  ""evidence"": {
+    ""consensus_address"": ""cosmosvalcons1ntk8eualewuprz0gamh8hnvcem2nrcdsgz563h"",
+    ""height"": ""11"",
+    ""power"": ""100"",
+    ""time"": ""2021-10-20T16:08:38.194017624Z""
   }
 }
 ```
@@ -355,23 +355,23 @@ Get all evidence
 Example:
 
 ```bash
-curl -X GET "http://localhost:1317/cosmos/evidence/v1beta1/evidence"
+curl -X GET ""http://localhost:1317/cosmos/evidence/v1beta1/evidence""
 ```
 
 Example Output:
 
 ```bash
 {
-  "evidence": [
+  ""evidence"": [
     {
-      "consensus_address": "cosmosvalcons1ntk8eualewuprz0gamh8hnvcem2nrcdsgz563h",
-      "height": "11",
-      "power": "100",
-      "time": "2021-10-20T16:08:38.194017624Z"
+      ""consensus_address"": ""cosmosvalcons1ntk8eualewuprz0gamh8hnvcem2nrcdsgz563h"",
+      ""height"": ""11"",
+      ""power"": ""100"",
+      ""time"": ""2021-10-20T16:08:38.194017624Z""
     }
   ],
-  "pagination": {
-    "total": "1"
+  ""pagination"": {
+    ""total"": ""1""
   }
 }
 ```
@@ -391,18 +391,18 @@ cosmos.evidence.v1beta1.Query/Evidence
 Example:
 
 ```bash
-grpcurl -plaintext -d '{"evidence_hash":"DF0C23E8634E480F84B9D5674A7CDC9816466DEC28A3358F73260F68D28D7660"}' localhost:9090 cosmos.evidence.v1beta1.Query/Evidence
+grpcurl -plaintext -d '{""evidence_hash"":""DF0C23E8634E480F84B9D5674A7CDC9816466DEC28A3358F73260F68D28D7660""}' localhost:9090 cosmos.evidence.v1beta1.Query/Evidence
 ```
 
 Example Output:
 
 ```bash
 {
-  "evidence": {
-    "consensus_address": "cosmosvalcons1ntk8eualewuprz0gamh8hnvcem2nrcdsgz563h",
-    "height": "11",
-    "power": "100",
-    "time": "2021-10-20T16:08:38.194017624Z"
+  ""evidence"": {
+    ""consensus_address"": ""cosmosvalcons1ntk8eualewuprz0gamh8hnvcem2nrcdsgz563h"",
+    ""height"": ""11"",
+    ""power"": ""100"",
+    ""time"": ""2021-10-20T16:08:38.194017624Z""
   }
 }
 ```
@@ -425,16 +425,17 @@ Example Output:
 
 ```bash
 {
-  "evidence": [
+  ""evidence"": [
     {
-      "consensus_address": "cosmosvalcons1ntk8eualewuprz0gamh8hnvcem2nrcdsgz563h",
-      "height": "11",
-      "power": "100",
-      "time": "2021-10-20T16:08:38.194017624Z"
+      ""consensus_address"": ""cosmosvalcons1ntk8eualewuprz0gamh8hnvcem2nrcdsgz563h"",
+      ""height"": ""11"",
+      ""power"": ""100"",
+      ""time"": ""2021-10-20T16:08:38.194017624Z""
     }
   ],
-  "pagination": {
-    "total": "1"
+  ""pagination"": {
+    ""total"": ""1""
   }
 }
 ```
+"
